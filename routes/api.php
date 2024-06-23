@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CompanyController;
 use App\Http\Controllers\API\JobController;
+use App\Http\Controllers\API\ResumeController;
+use App\Http\Controllers\API\ApplicationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,25 +20,34 @@ use App\Http\Controllers\API\JobController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
-Route::apiResource('companies', CompanyController::class);
-Route::apiResource('jobs', JobController::class);
+
 // Routes accessible to authenticated users
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
-    
+
     // Routes accessible to job seekers
-    Route::middleware('role:job seeker')->group(function () {
-        // Define routes accessible to job seekers
+    Route::middleware('role:job_seeker')->group(function () {
+        Route::apiResource('applications', ApplicationController::class)->except(['destroy']);
+        Route::get('jobs', [JobController::class, 'index']);
+        Route::get('jobs/{id}', [JobController::class, 'show']);
+        Route::apiResource('resumes', ResumeController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
     });
 
     // Routes accessible to employers
     Route::middleware('role:employer')->group(function () {
-        // Define routes accessible to employers
+        Route::apiResource('jobs', JobController::class)->except(['index', 'show']);
+        Route::apiResource('companies', CompanyController::class)->only(['index', 'show', 'store', 'update']);
+        Route::get('applications', [ApplicationController::class, 'index']);
+        Route::get('applications/{id}', [ApplicationController::class, 'show']);
     });
 
     // Routes accessible to administrators
     Route::middleware('role:administrator')->group(function () {
-        // Define routes accessible to administrators
+        Route::apiResource('companies', CompanyController::class)->except(['store', 'update']);
+        Route::apiResource('jobs', JobController::class)->except(['store', 'update']);
+        Route::apiResource('applications', ApplicationController::class)->except(['store', 'update']);
+        Route::apiResource('resumes', ResumeController::class)->except(['store', 'update']);
     });
+
 });

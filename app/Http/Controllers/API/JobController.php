@@ -22,7 +22,7 @@ class JobController extends Controller
     public function show($id)
 
     {
-    
+        $job = Job::find($id);
         if (! $job) {
             return $this->errorResponse('job not found', 404);
         }
