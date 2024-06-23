@@ -37,7 +37,6 @@ class CompanyController extends Controller
     $company->location = $request->location;
     $company->description = $request->description;
 
-    // $fee->date_paid = $request->date_paid;
 
     $company->save();
     

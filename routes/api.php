@@ -18,6 +18,7 @@ use App\Http\Controllers\API\ApplicationController;
 |
 */
 
+Route::get('users', [AuthController::class, 'index']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 

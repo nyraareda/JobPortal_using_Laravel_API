@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+
+    public function index(){
+        $users=User::all();
+        return response()->json([
+            'user' => $users
+        ]);
+    }
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
